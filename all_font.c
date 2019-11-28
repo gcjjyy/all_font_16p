@@ -7,8 +7,6 @@
 int ARG_WINDOW_WIDTH = 1024;
 int ARG_WINDOW_HEIGHT = 1024;
 int ARG_SCALE = 1;
-int FILE_HEADER_SIZE = 0;
-int GLYPH_HEADER_SIZE = 2;
 
 SDL_Window *window = NULL;
 SDL_Surface *screenSurface = NULL;
@@ -22,7 +20,7 @@ SDL_Event event;
     } while (0)
 
 void redraw() {
-    uint8_t ch = 0;
+    uint16_t code = 0;
     uint8_t glyph_buf[32] = {
         0,
     };
@@ -33,20 +31,14 @@ void redraw() {
 
     FILE *fp = fopen("./ALL_FONT.16P", "r");
 
-    for (int i = 0; i < FILE_HEADER_SIZE; i++) {
-        fread(&ch, 1, 1, fp);
-    }
-
-    printf("File header: %d / Glyph header: %d\n", FILE_HEADER_SIZE, GLYPH_HEADER_SIZE);
-
     int x = 0;
     int y = 0;
+    int index = 0;
     while (!feof(fp)) {
-        for (int i = 0; i < GLYPH_HEADER_SIZE; i++) {
-            fread(&ch, 1, 1, fp);
-        }
-
+        fread(&code, 2, 1, fp);
         fread(glyph_buf, 1, 28, fp);
+
+        printf("index: %d code: %d(0x%04x)\n", index++, code, code);
 
         for (int i = 0; i < 14; i++) {
             uint8_t left = glyph_buf[2 * i];
@@ -101,26 +93,6 @@ int main(int argc, char *argv[]) {
                         SDL_DestroyWindow(window);
                         SDL_Quit();
                         return 0;
-                        break;
-                    case SDLK_1:
-                        if (FILE_HEADER_SIZE > 0) {
-                            FILE_HEADER_SIZE--;
-                        }
-                        redraw();
-                        break;
-                    case SDLK_2:
-                        FILE_HEADER_SIZE++;
-                        redraw();
-                        break;
-                    case SDLK_3:
-                        if (GLYPH_HEADER_SIZE > 0) {
-                            GLYPH_HEADER_SIZE--;
-                        }
-                        redraw();
-                        break;
-                    case SDLK_4:
-                        GLYPH_HEADER_SIZE++;
-                        redraw();
                         break;
                 }
             } break;
