@@ -2,4 +2,4 @@
 Read KOEI's ms-dos game font (ALL_FONT.16P)
 
 # Screenshot
-![ALL_FONT.16P](ALL_FONT.16P)
+![all_font_16p.png](all_font_16p.png)
